@@ -36,22 +36,22 @@ function getLessonDurationSeconds(array $lesson): int
 }
 
 
-function calculateTP(Carbon $entry, Carbon $exit, Carbon $lessonStart, Carbon $lessonEnd): float
+function calculateTP(Carbon $entryTime, Carbon $exitTime, Carbon $lessonStart, Carbon $lessonEnd): float
 {
 
-    if ($entry->lt($lessonStart)) {
-        $entry = $lessonStart->copy();
+    if ($entryTime->lt($lessonStart)) {
+        $entryTime = $lessonStart->copy();
     }
-    if ($exit->gt($lessonEnd)) {
-        $exit = $lessonEnd->copy();
+    if ($exitTime->gt($lessonEnd)) {
+        $exitTime = $lessonEnd->copy();
     }
 
-    if ($exit->lte($entry)) {
+    if ($exitTime->lte($entryTime)) {
         return 0.0;
     }
 
     $lessonDuration = $lessonEnd->diffInSeconds($lessonStart);
-    $presenceDuration = $exit->diffInSeconds($entry);
+    $presenceDuration = $exitTime->diffInSeconds($entryTime);
 
     $tp = ($presenceDuration / $lessonDuration) * 100;
 
@@ -247,17 +247,17 @@ $attendance_records = [
 
     // Storia dell'Arte (courseId = 101)
 
-    ["studentId" => 1, "lessonId" => 1001, "lessonDate" => "10/05/2025", "entryTime" => "10:00", "exitTime" => "12:00"],
-    ["studentId" => 1, "lessonId" => 1002, "lessonDate" => "13/05/2025", "entryTime" => "09:00", "exitTime" => "12:00"],
-    ["studentId" => 1, "lessonId" => 1003, "lessonDate" => "17/05/2025", "entryTime" => "10:00", "exitTime" => "12:00"],
-    ["studentId" => 1, "lessonId" => 1004, "lessonDate" => "22/05/2025", "entryTime" => "10:00", "exitTime" => "12:00"],
+    ["studentId" => 1, "lessonId" => 1001, "lessonDate" => "10/05/2025", "entryTimeTime" => "10:00", "exitTimeTime" => "12:00"],
+    ["studentId" => 1, "lessonId" => 1002, "lessonDate" => "13/05/2025", "entryTimeTime" => "09:00", "exitTimeTime" => "12:00"],
+    ["studentId" => 1, "lessonId" => 1003, "lessonDate" => "17/05/2025", "entryTimeTime" => "10:00", "exitTimeTime" => "12:00"],
+    ["studentId" => 1, "lessonId" => 1004, "lessonDate" => "22/05/2025", "entryTimeTime" => "10:00", "exitTimeTime" => "12:00"],
 
     // Matematica (courseId = 103)
 
-    ["studentId" => 1, "lessonId" => 3001, "lessonDate" => "10/09/2025", "entryTime" => "10:00", "exitTime" => "13:00"],
-    ["studentId" => 1, "lessonId" => 3002, "lessonDate" => "12/09/2025", "entryTime" => "15:00", "exitTime" => "18:30"],
-    ["studentId" => 1, "lessonId" => 3003, "lessonDate" => "15/09/2025", "entryTime" => "08:30", "exitTime" => "12:00"],
-    ["studentId" => 1, "lessonId" => 3004, "lessonDate" => "17/09/2025", "entryTime" => "14:00", "exitTime" => "17:30"],
+    ["studentId" => 1, "lessonId" => 3001, "lessonDate" => "10/09/2025", "entryTimeTime" => "10:00", "exitTimeTime" => "13:00"],
+    ["studentId" => 1, "lessonId" => 3002, "lessonDate" => "12/09/2025", "entryTimeTime" => "15:00", "exitTimeTime" => "18:30"],
+    ["studentId" => 1, "lessonId" => 3003, "lessonDate" => "15/09/2025", "entryTimeTime" => "08:30", "exitTimeTime" => "12:00"],
+    ["studentId" => 1, "lessonId" => 3004, "lessonDate" => "17/09/2025", "entryTimeTime" => "14:00", "exitTimeTime" => "17:30"],
 
 
 
@@ -266,24 +266,24 @@ $attendance_records = [
 
     // Storia dell'Arte (101)
 
-    ["studentId" => 2, "lessonId" => 1001, "lessonDate" => "10/05/2025", "entryTime" => "10:15", "exitTime" => "11:45"],
-    ["studentId" => 2, "lessonId" => 1002, "lessonDate" => "13/05/2025", "entryTime" => "09:05", "exitTime" => "12:00"],
-    ["studentId" => 2, "lessonId" => 1003, "lessonDate" => "17/05/2025", "entryTime" => "13:30", "exitTime" => "15:00"], // early exit
+    ["studentId" => 2, "lessonId" => 1001, "lessonDate" => "10/05/2025", "entryTimeTime" => "10:15", "exitTimeTime" => "11:45"],
+    ["studentId" => 2, "lessonId" => 1002, "lessonDate" => "13/05/2025", "entryTimeTime" => "09:05", "exitTimeTime" => "12:00"],
+    ["studentId" => 2, "lessonId" => 1003, "lessonDate" => "17/05/2025", "entryTimeTime" => "13:30", "exitTimeTime" => "15:00"], // early exitTime
     // Absent 1004 (Arte Contemporanea)
 
     // Programmazione PHP (102)
 
-    ["studentId" => 2, "lessonId" => 2001, "lessonDate" => "06/08/2025", "entryTime" => "09:00", "exitTime" => "12:00"],
-    ["studentId" => 2, "lessonId" => 2002, "lessonDate" => "08/08/2025", "entryTime" => "14:10", "exitTime" => "17:50"],
-    ["studentId" => 2, "lessonId" => 2003, "lessonDate" => "12/08/2025", "entryTime" => "09:40", "exitTime" => "12:30"],
+    ["studentId" => 2, "lessonId" => 2001, "lessonDate" => "06/08/2025", "entryTimeTime" => "09:00", "exitTimeTime" => "12:00"],
+    ["studentId" => 2, "lessonId" => 2002, "lessonDate" => "08/08/2025", "entryTimeTime" => "14:10", "exitTimeTime" => "17:50"],
+    ["studentId" => 2, "lessonId" => 2003, "lessonDate" => "12/08/2025", "entryTimeTime" => "09:40", "exitTimeTime" => "12:30"],
     // Absent 2004
 
     // Matematica (103)
 
-    ["studentId" => 2, "lessonId" => 3001, "lessonDate" => "10/09/2025", "entryTime" => "10:30", "exitTime" => "13:00"],
+    ["studentId" => 2, "lessonId" => 3001, "lessonDate" => "10/09/2025", "entryTimeTime" => "10:30", "exitTimeTime" => "13:00"],
     // Absent 3002
-    ["studentId" => 2, "lessonId" => 3003, "lessonDate" => "15/09/2025", "entryTime" => "08:30", "exitTime" => "11:30"], // early exit
-    ["studentId" => 2, "lessonId" => 3004, "lessonDate" => "17/09/2025", "entryTime" => "14:00", "exitTime" => "17:00"],
+    ["studentId" => 2, "lessonId" => 3003, "lessonDate" => "15/09/2025", "entryTimeTime" => "08:30", "exitTimeTime" => "11:30"], // early exitTime
+    ["studentId" => 2, "lessonId" => 3004, "lessonDate" => "17/09/2025", "entryTimeTime" => "14:00", "exitTimeTime" => "17:00"],
 
 
 
@@ -292,10 +292,10 @@ $attendance_records = [
 
     // Programmazione PHP (102)
 
-    ["studentId" => 3, "lessonId" => 2001, "lessonDate" => "06/08/2025", "entryTime" => "09:00", "exitTime" => "11:00"], // early exit
-    ["studentId" => 3, "lessonId" => 2002, "lessonDate" => "08/08/2025", "entryTime" => "14:00", "exitTime" => "18:00"],
-    ["studentId" => 3, "lessonId" => 2003, "lessonDate" => "12/08/2025", "entryTime" => "09:45", "exitTime" => "12:30"],
-    ["studentId" => 3, "lessonId" => 2004, "lessonDate" => "14/08/2025", "entryTime" => "14:00", "exitTime" => "17:30"],
+    ["studentId" => 3, "lessonId" => 2001, "lessonDate" => "06/08/2025", "entryTimeTime" => "09:00", "exitTimeTime" => "11:00"], // early exitTime
+    ["studentId" => 3, "lessonId" => 2002, "lessonDate" => "08/08/2025", "entryTimeTime" => "14:00", "exitTimeTime" => "18:00"],
+    ["studentId" => 3, "lessonId" => 2003, "lessonDate" => "12/08/2025", "entryTimeTime" => "09:45", "exitTimeTime" => "12:30"],
+    ["studentId" => 3, "lessonId" => 2004, "lessonDate" => "14/08/2025", "entryTimeTime" => "14:00", "exitTimeTime" => "17:30"],
 
 
 
@@ -304,25 +304,25 @@ $attendance_records = [
 
     // Programmazione PHP (102)
 
-    ["studentId" => 4, "lessonId" => 2001, "lessonDate" => "06/08/2025", "entryTime" => "09:15", "exitTime" => "12:00"],
-    ["studentId" => 4, "lessonId" => 2002, "lessonDate" => "08/08/2025", "entryTime" => "14:00", "exitTime" => "17:00"], // early exit
-    ["studentId" => 4, "lessonId" => 2003, "lessonDate" => "12/08/2025", "entryTime" => "10:00", "exitTime" => "12:30"],
-    ["studentId" => 4, "lessonId" => 2004, "lessonDate" => "14/08/2025", "entryTime" => "14:00", "exitTime" => "17:00"], // early exit
+    ["studentId" => 4, "lessonId" => 2001, "lessonDate" => "06/08/2025", "entryTimeTime" => "09:15", "exitTimeTime" => "12:00"],
+    ["studentId" => 4, "lessonId" => 2002, "lessonDate" => "08/08/2025", "entryTimeTime" => "14:00", "exitTimeTime" => "17:00"], // early exitTime
+    ["studentId" => 4, "lessonId" => 2003, "lessonDate" => "12/08/2025", "entryTimeTime" => "10:00", "exitTimeTime" => "12:30"],
+    ["studentId" => 4, "lessonId" => 2004, "lessonDate" => "14/08/2025", "entryTimeTime" => "14:00", "exitTimeTime" => "17:00"], // early exitTime
 
     // Matematica (103)
 
-    ["studentId" => 4, "lessonId" => 3001, "lessonDate" => "10/09/2025", "entryTime" => "10:00", "exitTime" => "13:00"],
-    ["studentId" => 4, "lessonId" => 3002, "lessonDate" => "12/09/2025", "entryTime" => "15:10", "exitTime" => "18:30"],
+    ["studentId" => 4, "lessonId" => 3001, "lessonDate" => "10/09/2025", "entryTimeTime" => "10:00", "exitTimeTime" => "13:00"],
+    ["studentId" => 4, "lessonId" => 3002, "lessonDate" => "12/09/2025", "entryTimeTime" => "15:10", "exitTimeTime" => "18:30"],
     // Absent 3003
-    ["studentId" => 4, "lessonId" => 3004, "lessonDate" => "17/09/2025", "entryTime" => "14:00", "exitTime" => "17:30"],
+    ["studentId" => 4, "lessonId" => 3004, "lessonDate" => "17/09/2025", "entryTimeTime" => "14:00", "exitTimeTime" => "17:30"],
 ];
 
 
 foreach ($attendance_records as &$record) {
 
     $record["lessonDate"] = Carbon::createFromFormat("d/m/Y", $record["lessonDate"]);
-    $record["entryTime"] = Carbon::createFromFormat("d/m/Y H:i", $record["lessonDate"]->format("d/m/Y") . " " . $record["entryTime"]);
-    $record["exitTime"] = Carbon::createFromFormat("d/m/Y H:i", $record["lessonDate"]->format("d/m/Y") . " " . $record["exitTime"]);
+    $record["entryTimeTime"] = Carbon::createFromFormat("d/m/Y H:i", $record["lessonDate"]->format("d/m/Y") . " " . $record["entryTimeTime"]);
+    $record["exitTimeTime"] = Carbon::createFromFormat("d/m/Y H:i", $record["lessonDate"]->format("d/m/Y") . " " . $record["exitTimeTime"]);
 }
 unset($record);
 
