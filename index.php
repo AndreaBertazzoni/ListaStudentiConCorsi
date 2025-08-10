@@ -4,6 +4,62 @@ require_once "vendor/autoload.php";
 
 use Carbon\Carbon;
 
+
+function getCourseDateRange(array $course): array
+{
+    $dates = [];
+    foreach ($course["lessons"] as $lesson) {
+        $dates[] = $lesson["lessonDate"];
+    }
+    $start = min($dates);
+    $end = max($dates);
+    return [$start, $end];
+}
+
+
+function getCourseStatus(Carbon $start, Carbon $end): string
+{
+    $now = Carbon::now();
+    if ($now->lt($start)) {
+        return "in attesa di inizio";
+    } elseif ($now->between($start, $end)) {
+        return "in corso";
+    } else {
+        return "concluso";
+    }
+}
+
+
+function getLessonDurationSeconds(array $lesson): int
+{
+    return $lesson["lessonEnd"]->diffInSeconds($lesson["lessonStart"]);
+}
+
+
+function calculateTP(Carbon $entry, Carbon $exit, Carbon $lessonStart, Carbon $lessonEnd): float
+{
+
+    if ($entry->lt($lessonStart)) {
+        $entry = $lessonStart->copy();
+    }
+    if ($exit->gt($lessonEnd)) {
+        $exit = $lessonEnd->copy();
+    }
+
+    if ($exit->lte($entry)) {
+        return 0.0;
+    }
+
+    $lessonDuration = $lessonEnd->diffInSeconds($lessonStart);
+    $presenceDuration = $exit->diffInSeconds($entry);
+
+    $tp = ($presenceDuration / $lessonDuration) * 100;
+
+    return round($tp, 1);
+}
+
+
+
 $students = [
 
     1 => ["studentId" => 1, "name" => "Andrea", "surname" => "Rossi"],
@@ -26,8 +82,8 @@ $courses = [
                 "lessonNumber" => 1,
                 "lessonName" => "Introduzione Storia dell'Arte",
                 "lessonDate" => "10/05/2025",
-                "startTime" => "10:00",
-                "endTime" => "12:00",
+                "lessonStart" => "10:00",
+                "lessonEnd" => "12:00",
             ],
 
             1002 =>
@@ -36,8 +92,8 @@ $courses = [
                 "lessonNumber" => 2,
                 "lessonName" => "Rinascimento",
                 "lessonDate" => "13/05/2025",
-                "startTime" => "09:00",
-                "endTime" => "12:00",
+                "lessonStart" => "09:00",
+                "lessonEnd" => "12:00",
             ],
             1003 =>
             [
@@ -45,8 +101,8 @@ $courses = [
                 "lessonNumber" => 3,
                 "lessonName" => "Futurismo",
                 "lessonDate" => "17/05/2025",
-                "startTime" => "13:30",
-                "endTime" => "16:00",
+                "lessonStart" => "13:30",
+                "lessonEnd" => "16:00",
             ],
             1004 =>
             [
@@ -54,8 +110,8 @@ $courses = [
                 "lessonNumber" => 4,
                 "lessonName" => "Arte Contemporanea",
                 "lessonDate" => "22/05/2025",
-                "startTime" => "14:00",
-                "endTime" => "17:30",
+                "lessonStart" => "14:00",
+                "lessonEnd" => "17:30",
             ],
 
         ],
@@ -73,8 +129,8 @@ $courses = [
                 "lessonNumber" => 1,
                 "lessonName" => "Introduzione PHP",
                 "lessonDate" => "06/08/2025",
-                "startTime" => "09:00",
-                "endTime" => "12:00",
+                "lessonStart" => "09:00",
+                "lessonEnd" => "12:00",
             ],
 
             2002 =>
@@ -83,8 +139,8 @@ $courses = [
                 "lessonNumber" => 2,
                 "lessonName" => "Variabili",
                 "lessonDate" => "08/08/2025",
-                "startTime" => "14:00",
-                "endTime" => "18:00",
+                "lessonStart" => "14:00",
+                "lessonEnd" => "18:00",
             ],
             2003 =>
             [
@@ -92,8 +148,8 @@ $courses = [
                 "lessonNumber" => 3,
                 "lessonName" => "Logica if/else",
                 "lessonDate" => "12/08/2025",
-                "startTime" => "09:30",
-                "endTime" => "12:30",
+                "lessonStart" => "09:30",
+                "lessonEnd" => "12:30",
             ],
             2004 =>
             [
@@ -101,8 +157,8 @@ $courses = [
                 "lessonNumber" => 4,
                 "lessonName" => "Array",
                 "lessonDate" => "14/08/2025",
-                "startTime" => "14:00",
-                "endTime" => "17:30",
+                "lessonStart" => "14:00",
+                "lessonEnd" => "17:30",
             ],
 
         ],
@@ -120,8 +176,8 @@ $courses = [
                 "lessonNumber" => 1,
                 "lessonName" => "Introduzione Matematica",
                 "lessonDate" => "10/09/2025",
-                "startTime" => "10:00",
-                "endTime" => "13:00",
+                "lessonStart" => "10:00",
+                "lessonEnd" => "13:00",
             ],
 
             3002 =>
@@ -130,8 +186,8 @@ $courses = [
                 "lessonNumber" => 2,
                 "lessonName" => "Calcoli semplici",
                 "lessonDate" => "12/09/2025",
-                "startTime" => "15:00",
-                "endTime" => "18:30",
+                "lessonStart" => "15:00",
+                "lessonEnd" => "18:30",
             ],
             3003 =>
             [
@@ -139,8 +195,8 @@ $courses = [
                 "lessonNumber" => 3,
                 "lessonName" => "Equazioni",
                 "lessonDate" => "15/09/2025",
-                "startTime" => "08:30",
-                "endTime" => "12:00",
+                "lessonStart" => "08:30",
+                "lessonEnd" => "12:00",
             ],
             3004 =>
             [
@@ -148,8 +204,8 @@ $courses = [
                 "lessonNumber" => 4,
                 "lessonName" => "Algebra",
                 "lessonDate" => "17/09/2025",
-                "startTime" => "14:00",
-                "endTime" => "17:30",
+                "lessonStart" => "14:00",
+                "lessonEnd" => "17:30",
             ],
 
         ],
@@ -165,8 +221,8 @@ foreach ($courses as &$course) {
     foreach ($course["lessons"] as &$lesson) {
 
         $lesson["lessonDate"] = Carbon::createFromFormat("d/m/Y", $lesson["lessonDate"]);
-        $lesson["startTime"] = Carbon::createFromFormat("d/m/Y H:i", $lesson["lessonDate"]->format("d/m/Y") . "" . $lesson["startTime"]);
-        $lesson["endTime"] = Carbon::createFromFormat("d/m/Y H:i", $lesson["lessonDate"]->format("d/m/Y") . "" . $lesson["endTime"]);
+        $lesson["lessonStart"] = Carbon::createFromFormat("d/m/Y H:i", $lesson["lessonDate"]->format("d/m/Y") . "" . $lesson["lessonStart"]);
+        $lesson["lessonEnd"] = Carbon::createFromFormat("d/m/Y H:i", $lesson["lessonDate"]->format("d/m/Y") . "" . $lesson["lessonEnd"]);
     }
 };
 unset($course);
@@ -270,6 +326,14 @@ foreach ($attendance_records as &$record) {
 }
 unset($record);
 
+foreach ($courses as $course) {
+    [$start, $end] = getCourseDateRange($course);
+    $status = getCourseStatus($start, $end);
+    
+    echo "Corso: {$course['courseName']}<br>";
+    echo "Dal: " . $start->format("d/m/Y") . " al: " . $end->format("d/m/Y") . "<br>";
+    echo "Stato: $status<br><br>";
+}
 
 
 
